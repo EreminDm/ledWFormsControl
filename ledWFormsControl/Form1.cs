@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using Ledman;
+
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
@@ -15,8 +15,22 @@ namespace ledWFormsControl
 {
     public partial class Form1 : Form
     {
-        [DllImport(@"C:\Users\BBV\Documents\visual studio 2017\Projects\ledWFormsControl\ledWFormsControl\bin\x86\Debug\LED_Setup_Interface.dll")]
-        public static extern int SetForegroundWindow(IntPtr point);
+        ushort sendersCount;
+        int FoundReceivers;
+        int[] senderIDs = new int[2];
+        ushort senderID1;
+        ushort senderID2;
+
+        struct tagApiBigWord
+        {
+            byte hi;
+            byte lo;
+            public ushort GetWord()
+            {
+                return (ushort)(this.hi << 8 + this.lo);
+            }
+        };
+
         public Form1()
         {
             InitializeComponent();
@@ -27,7 +41,7 @@ namespace ledWFormsControl
         }
 
         private void BW_DoWork(object sender, DoWorkEventArgs e)
-        {
+        { 
             Thread.Sleep(500);
             label3.Invoke((MethodInvoker)delegate
             {
@@ -59,6 +73,36 @@ namespace ledWFormsControl
             {
                 button4.PerformClick();
             });
+            Thread.Sleep(300);
+            label7.Invoke((MethodInvoker)delegate
+            {
+                label7.Text = "Searching bad panels...";
+                label7.ForeColor = Color.Blue;
+            });
+            button5.Invoke((MethodInvoker)delegate
+            {
+                button5.PerformClick();
+            });
+
+            //int reseivers = NativeMethods.GetFoundReceiverCount();
+            //NativeMethods.tagReceiverModuleDetailInfo ModuleDetails;
+           
+
+          //  for (int step = 0; step < sendersCount; step++)
+           // {
+                //  ushort senderID = NativeMethods.GetSenderId((byte)step);
+
+
+
+                //for (ushort step1 = 1; step1 <= reseivers; step1++)
+                //{
+                //    NativeMethods.tagReceiverBadPanels badPanels;
+                //    badPanels.byBadPanelCol = new byte[16];
+                //    badPanels.byBadPanelCount = 0;
+                //    badPanels.byBadPanelRow = new byte[16];
+                //    GetReceiverBadPanels(step1, out badPanels);
+                //}
+            //}
         }        
 
         public void InitSenders()
@@ -67,7 +111,12 @@ namespace ledWFormsControl
 
             if (NativeMethods.ReConnectSender())
             {
-                ushort sendersCount = NativeMethods.GetConnectSenderCount(); // Senders Count (ushort)
+                sendersCount = NativeMethods.GetConnectSenderCount(); // Senders Count (ushort)
+                for (int step = 0; step < sendersCount; step++) {
+                    senderIDs[step] = NativeMethods.GetSenderId((byte)step);
+                }
+                senderID1 = (ushort)senderIDs[0];
+                senderID2 = (ushort)senderIDs[1];
                 string countOfSenders = sendersCount.ToString();
                 label2.Invoke((MethodInvoker)delegate
                 {
@@ -79,7 +128,7 @@ namespace ledWFormsControl
                     label3.Text = "Initialization complete";
                     label3.ForeColor = Color.Green;
                 });
-
+               
             }
             else
             {
@@ -130,7 +179,7 @@ namespace ledWFormsControl
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var FoundReceivers = NativeMethods.GetFoundReceiverCount();
+            FoundReceivers = NativeMethods.GetFoundReceiverCount();
             if (FoundReceivers == 0)
             {
                     label6.Text = "Receivers not found";
@@ -144,8 +193,123 @@ namespace ledWFormsControl
                     label6.ForeColor = Color.Green;
 
             }
+           
         }
 
-        
+        private void button5_Click(object sender, EventArgs e)
+        {
+
+           NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
+
+           if( NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, 0)) {
+                int x, y;
+                double voltage;
+                int j;
+                for( j=0; j < stModuleDetailInfo.nRealModuleAmount; j++)
+                {
+                    x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
+                    voltage = x * 32 / 1000.0;
+                    y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
+                    MessageBox.Show(voltage + " " + y);
+                }
+            }
+
+
+
+
+
+            //// get receiver monitor data start
+            //NativeMethods.tagReceiverMonitorData monitorData;
+            //NativeMethods.tagReceiverMonitorData_ExPart monitorDataExPart;
+            //NativeMethods.tagReceiverIdInfo recvId;
+
+            //var ReadDataSucess = NativeMethods.GetReceiverMonitorData(out monitorData,0);
+            //ReadDataSucess &= NativeMethods.GetReceiverMonitorData_ExPart(out monitorDataExPart, 0);
+            //NativeMethods.GetReceiverIdInfo(out recvId, 0);
+
+            //if(ReadDataSucess == false)
+            //{
+            //    MessageBox.Show("Read Data faild");
+            //    return;
+            //}
+
+            //int TotalBadPixels;
+
+            //MessageBox.Show("SenderIndex: " + recvId.bySenderIndex + " Port: " + recvId.bySenderPortIndex + " HubPortIndex: " + recvId.byHubPortIndex + " PcbMain: " + monitorData.byPcbMain+" PcbSUB: "+ monitorData.byPcbMain);
+            //String volt = String.Format("{0}.{1}",monitorData.bwPowerVolt.GetWord()/1000,monitorData.bwPowerVolt.GetWord()%1000);
+            //MessageBox.Show("volt " +volt);
+
+            ////end receiver get monitor data
+
+            /////start get Bad panels
+            ////int reseivers = (int)NativeMethods.GetFoundReceiverCount();
+            //if (FoundReceivers == 0)
+            //{
+            //    label7.Text = "Couldn't search bad panels";
+            //    label7.ForeColor = Color.Orange;
+            //}
+            //else
+            //{
+            //    NativeMethods.tagReceiverBadPanels badPanels;
+
+            //    for (ushort step1 = 0; step1 < FoundReceivers; step1++)
+            //    {                    
+            //        bool status;
+            //        for (int step = 0; step < sendersCount; step++)
+            //        {
+
+            //            //NativeMethods.tagReceiverMonitorData monitor;
+            //            //status = GetReceiverMonitorData(out monitor, (ushort)step1);
+            //            //MessageBox.Show(monitor.bwPowerVolt.hi.ToString() + " "+monitor.bwPowerVolt.lo.ToString());
+            //            // bool status = GetReceiverBadPanels(step1, out badPanels);;
+            //            status = GetReceiverBadPanels_ById((ushort)senderIDs[step], (byte)step, step1, out badPanels);
+
+
+            //            if (status == false)
+            //            {
+            //                MessageBox.Show("read dataFail");
+            //                return;
+            //                //MessageBox.Show("col " + badPanels.wReceiverCol.ToString() + " row " + badPanels.wReceiverRow.ToString() + " " + badPanels.byBadPanelCol[step1].ToString());
+            //            }
+            //            if(badPanels.byBadPanelCount < 1)
+            //            {
+            //                //all panels ok
+            //            }
+            //            else
+            //            {
+            //                MessageBox.Show("Receiver:row " + badPanels.wReceiverRow + " col " + badPanels.wReceiverCol);
+            //                for (int i=0; i <badPanels.byBadPanelCount; i++)
+            //                {
+            //                    // string message bad panel row and col badPanels.byBadPanelRow[i], badPanels.byBadPanelCol[i]
+            //                    MessageBox.Show("Receiver:row " + badPanels.byBadPanelRow[i] + " col " + badPanels.byBadPanelCol[i] );
+
+            //                }
+            //            }
+
+            //            MessageBox.Show("col " + badPanels.wReceiverCol.ToString() + " row " + badPanels.wReceiverRow.ToString() + " " + badPanels.byBadPanelCol[step1].ToString());
+
+            //        }
+            //    }
+
+            //    //int reseivers = (int)NativeMethods.GetFoundReceiverCount();
+            //    ////NativeMethods.tagReceiverModuleDetailInfo ModuleDetails;
+            //    //NativeMethods.tagReceiverBadPanels BadPanels;
+            //    //for (int step = 0; step < sendersCount; step++)
+            //    //{
+            //    //    ushort senderID = NativeMethods.GetSenderId((byte)step);
+
+
+
+            //    //    for (int step1 = 0; step1 < reseivers; step1++)
+            //    //    {
+            //    //        // NativeMethods.GetReceiverBadPanels((ushort)step1, out BadPanels);
+
+            //    //        NativeMethods.GetReceiverBadPanels_ById(senderID, (byte)step, (ushort)step1, out BadPanels);
+            //    //    }
+            //    //}
+            //}
+            ////end get Bad Panels
+
+        }
     }
 }
