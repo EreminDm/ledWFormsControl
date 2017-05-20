@@ -198,49 +198,6 @@ namespace ledWFormsControl
 
         private void button5_Click(object sender, EventArgs e)
         {
-
-           NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
-
-           if( NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, 0)) {
-                int x, y;
-                double voltage;
-                int j;
-                for( j=0; j < stModuleDetailInfo.nRealModuleAmount; j++)
-                {
-                    x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
-                    voltage = x * 32 / 1000.0;
-                    y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
-                    MessageBox.Show(voltage + " " + y);
-                }
-            }
-
-
-
-
-
-            //// get receiver monitor data start
-            //NativeMethods.tagReceiverMonitorData monitorData;
-            //NativeMethods.tagReceiverMonitorData_ExPart monitorDataExPart;
-            //NativeMethods.tagReceiverIdInfo recvId;
-
-            //var ReadDataSucess = NativeMethods.GetReceiverMonitorData(out monitorData,0);
-            //ReadDataSucess &= NativeMethods.GetReceiverMonitorData_ExPart(out monitorDataExPart, 0);
-            //NativeMethods.GetReceiverIdInfo(out recvId, 0);
-
-            //if(ReadDataSucess == false)
-            //{
-            //    MessageBox.Show("Read Data faild");
-            //    return;
-            //}
-
-            //int TotalBadPixels;
-
-            //MessageBox.Show("SenderIndex: " + recvId.bySenderIndex + " Port: " + recvId.bySenderPortIndex + " HubPortIndex: " + recvId.byHubPortIndex + " PcbMain: " + monitorData.byPcbMain+" PcbSUB: "+ monitorData.byPcbMain);
-            //String volt = String.Format("{0}.{1}",monitorData.bwPowerVolt.GetWord()/1000,monitorData.bwPowerVolt.GetWord()%1000);
-            //MessageBox.Show("volt " +volt);
-
-            ////end receiver get monitor data
-
             /////start get Bad panels
             ////int reseivers = (int)NativeMethods.GetFoundReceiverCount();
             //if (FoundReceivers == 0)
@@ -312,4 +269,38 @@ namespace ledWFormsControl
 
         }
     }
+    //START GEt module voltage and temperature Information
+    //NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
+    //     for (int step1 = 0; step1 < FoundReceivers; step1++) { 
+    //         if ( NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, 0)) {
+    //         int x, y;
+    //         double voltage;
+    //         int j;
+    //         for( j=0; j < stModuleDetailInfo.nRealModuleAmount; j++)
+    //         {
+    //             x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
+    //             voltage = x * 32 / 1000.0;
+    //             y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
+    //             MessageBox.Show(stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr +" "+voltage + " " + y);
+    //         }
+    //     }
+    // } 
+    // END
+
+    //// START DVI IPUT STATUS
+    //for (ushort step1 = 0; step1 < sendersCount; step1++)
+    //{
+    //    bool bResult = NativeMethods.IsSenderDviInputOk((byte)step1);
+    //    if (bResult)
+    //    {
+    //        ///dvi input ok
+
+    //    }
+    //    else
+    //    {
+    //        // no dvi input
+    //    }
+
+    //}
+    ////END DVI INPUT
 }
