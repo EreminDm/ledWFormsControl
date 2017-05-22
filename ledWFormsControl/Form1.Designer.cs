@@ -41,6 +41,8 @@
             this.button5 = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.button6 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -104,7 +106,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(731, 5);
+            this.label3.Location = new System.Drawing.Point(709, 9);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(0, 13);
             this.label3.TabIndex = 6;
@@ -130,7 +132,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(858, 5);
+            this.label6.Location = new System.Drawing.Point(836, 9);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(86, 13);
             this.label6.TabIndex = 9;
@@ -142,17 +144,18 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(112, 25);
             this.button5.TabIndex = 10;
-            this.button5.Text = "button5";
+            this.button5.Text = "DVI signal search";
             this.button5.UseVisualStyleBackColor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(734, 43);
+            this.label7.Location = new System.Drawing.Point(709, 44);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(0, 13);
+            this.label7.Size = new System.Drawing.Size(122, 13);
             this.label7.TabIndex = 11;
+            this.label7.Text = "Module searching status";
             // 
             // label8
             // 
@@ -163,11 +166,32 @@
             this.label8.TabIndex = 12;
             this.label8.Text = "Bad panels";
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(836, 44);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(82, 13);
+            this.label9.TabIndex = 13;
+            this.label9.Text = "DVI input status";
+            // 
+            // button6
+            // 
+            this.button6.Location = new System.Drawing.Point(508, -1);
+            this.button6.Name = "button6";
+            this.button6.Size = new System.Drawing.Size(112, 25);
+            this.button6.TabIndex = 14;
+            this.button6.Text = "button6";
+            this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(956, 426);
+            this.Controls.Add(this.button6);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.label7);
             this.Controls.Add(this.button5);
@@ -203,6 +227,8 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Button button6;
     }
 }
 
