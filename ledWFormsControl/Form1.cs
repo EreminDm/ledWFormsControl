@@ -35,6 +35,9 @@ namespace ledWFormsControl
                 return (ushort)(this.hi << 8 + this.lo);
             }
         };
+        public class TEST {
+            public string moduleInfo { get; set; }
+        }
 
         public Form1()
         {
@@ -91,6 +94,7 @@ namespace ledWFormsControl
                 label7.Text = "Searching module info...";
                 label7.ForeColor = Color.Blue;
             });
+            Thread.Sleep(300);
             button6.Invoke((MethodInvoker)delegate
             {
                 button6.PerformClick();
@@ -218,30 +222,50 @@ namespace ledWFormsControl
             int x, y;
             double voltage;
             int j;
+            
             for (int step1 = 0; step1 < FoundReceivers; step1++)
             {
-                    if (NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, (ushort)step1))
+                string[][] iReceivers = new string[FoundReceivers][];
+                
+                if (NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, (ushort)step1))
                     {
-                        
-                        for (j = 0; j < stModuleDetailInfo.nRealModuleAmount; j++)
+                    string[] jReceivers = new string[stModuleDetailInfo.nRealModuleAmount];
+
+                    for (j = 0; j < stModuleDetailInfo.nRealModuleAmount; j++)
                         {
                             x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
                             voltage = x * 32 / 1000.0;
                             y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
-                            MessageBox.Show("ReceiverCount "+ step1 + " Module "+stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr + " voltage: " + voltage + " temperature: " + y);
+                        string a = "ReceiverCountValue " + step1.ToString() + " Module number " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
+                        iReceivers[step1][j] = a;
+                       
+
+                       // MessageBox.Show("ReceiverCount "+ step1 + " Module "+stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr + " voltage: " + voltage + " temperature: " + y);
                         }
                     label7.Text = "Module information found";
                     label7.ForeColor = Color.Green;
+                    
+                    
                     }
                     else
                 {
                     label7.Text = "Module information not found";
                     label7.ForeColor = Color.Red;
                 }
+                
+
             }
             // END
         }
-    }
+        public class PostData
+        {
+            public int SendersCount { get; set; }
+            public ushort SenderID2 { get; set; }
+            public ushort SenderID1 { get; set; }
+            public int ReceiversCount { get; set; }
+           // public string Modules 
+        }
+    }               
     
 
    

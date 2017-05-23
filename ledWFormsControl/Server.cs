@@ -10,14 +10,14 @@ namespace ledWFormsControl
 {
     class Server
     {
-        public void SendRequest(string postData)
+        public void SendRequest(object postData)
         {
 
             var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://url");
-            
 
+            string postDataJSON = postData.ToString();
             // postData += "&thing2=world";
-            var Data = Encoding.ASCII.GetBytes(postData);
+            var Data = Encoding.ASCII.GetBytes(postDataJSON);
 
 
             httpWebRequest.Method = "POST";
