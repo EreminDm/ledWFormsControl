@@ -106,7 +106,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(709, 9);
+            this.label3.Location = new System.Drawing.Point(253, 44);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(0, 13);
             this.label3.TabIndex = 6;
@@ -132,7 +132,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(836, 9);
+            this.label6.Location = new System.Drawing.Point(244, 82);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(86, 13);
             this.label6.TabIndex = 9;
@@ -151,7 +151,7 @@
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(709, 44);
+            this.label7.Location = new System.Drawing.Point(244, 120);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(122, 13);
             this.label7.TabIndex = 11;
@@ -169,7 +169,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(836, 44);
+            this.label9.Location = new System.Drawing.Point(384, 82);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(82, 13);
             this.label9.TabIndex = 13;
@@ -181,7 +181,7 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(112, 25);
             this.button6.TabIndex = 14;
-            this.button6.Text = "button6";
+            this.button6.Text = "Module information";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -189,7 +189,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(956, 426);
+            this.ClientSize = new System.Drawing.Size(721, 215);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.label8);

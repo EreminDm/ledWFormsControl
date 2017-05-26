@@ -1,32 +1,33 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using static ledWFormsControl.Form1;
 
 namespace ledWFormsControl
 {
     public class Server
     {
-        public void SendRequest(object postData)
+        
+        public void SendRequest(object sendingData)
         {
-
             var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://url");
 
-            string postDataJSON = postData.ToString();
-            // postData += "&thing2=world";
-            var Data = Encoding.ASCII.GetBytes(postDataJSON);
-
-
+            string postDataJSON = JsonConvert.SerializeObject(sendingData);
+            //var Data = Encoding.ASCII.GetBytes(postDataJSON);
             httpWebRequest.Method = "POST";
             httpWebRequest.ContentType = "application/x-www-form-urlencoded";
-            httpWebRequest.ContentLength = Data.Length;
 
-            using (var stream = httpWebRequest.GetRequestStream())
+            using (var streamWriter = new StreamWriter(httpWebRequest.GetRequestStream()))
             {
-                stream.Write(Data, 0, Data.Length);
+
+                streamWriter.Write(postDataJSON);
+                streamWriter.Flush();
+                streamWriter.Close();
             }
 
             var response = (HttpWebResponse)httpWebRequest.GetResponse();
