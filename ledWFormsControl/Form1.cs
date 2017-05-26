@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Newtonsoft.Json;
 
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -25,6 +26,16 @@ namespace ledWFormsControl
         int FoundReceivers;
         bool DVIinput;
 
+        
+        public class PostData
+        {
+            public int SendersCount;
+            public ushort SenderID2;
+            public ushort SenderID1;
+            public int ReceiversCount;
+            public string Modules;
+        }
+        PostData PD = new PostData();
 
         struct tagApiBigWord
         {
@@ -73,7 +84,7 @@ namespace ledWFormsControl
             {
                 button2.PerformClick();
             });
-            Thread.Sleep(30000);
+            Thread.Sleep(60000);
             button3.Invoke((MethodInvoker)delegate
             {
                 button3.PerformClick();
@@ -94,7 +105,7 @@ namespace ledWFormsControl
                 label7.Text = "Searching module info...";
                 label7.ForeColor = Color.Blue;
             });
-            Thread.Sleep(300);
+            Thread.Sleep(500);
             button6.Invoke((MethodInvoker)delegate
             {
                 button6.PerformClick();
@@ -108,12 +119,16 @@ namespace ledWFormsControl
 
             if (NativeMethods.ReConnectSender())
             {
-                sendersCount = NativeMethods.GetConnectSenderCount(); // Senders Count (ushort)
+                sendersCount = NativeMethods.GetConnectSenderCount();
+                PD.SendersCount = sendersCount;
+                // Senders Count (ushort)
                 for (int step = 0; step < sendersCount; step++) {
                     senderIDs[step] = NativeMethods.GetSenderId((byte)step);
                 }
                 senderID1 = (ushort)senderIDs[0];
                 senderID2 = (ushort)senderIDs[1];
+                PD.SenderID1 = senderID1;
+                PD.SenderID2 = senderID2;
                 string countOfSenders = sendersCount.ToString();
                 label2.Invoke((MethodInvoker)delegate
                 {
@@ -177,6 +192,7 @@ namespace ledWFormsControl
         private void button4_Click(object sender, EventArgs e)
         {
             FoundReceivers = NativeMethods.GetFoundReceiverCount();
+            PD.ReceiversCount = FoundReceivers;
             if (FoundReceivers == 0)
             {
                     label6.Text = "Receivers not found";
@@ -217,35 +233,36 @@ namespace ledWFormsControl
 
         private void button6_Click(object sender, EventArgs e)
         {
+
+            string[] iReceivers = new string[FoundReceivers];
             //START GEt module voltage and temperature Information
             NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
             int x, y;
             double voltage;
             int j;
-            
             for (int step1 = 0; step1 < FoundReceivers; step1++)
             {
-                string[][] iReceivers = new string[FoundReceivers][];
-                
+
                 if (NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, (ushort)step1))
                     {
-                    string[] jReceivers = new string[stModuleDetailInfo.nRealModuleAmount];
+                    ushort ModuleAmount = stModuleDetailInfo.nRealModuleAmount;
+                    string[] jReceivers = new string[ModuleAmount];
 
-                    for (j = 0; j < stModuleDetailInfo.nRealModuleAmount; j++)
+                    for (j = 0; j < ModuleAmount; j++)
                         {
                             x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
                             voltage = x * 32 / 1000.0;
                             y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
                         string a = "ReceiverCountValue " + step1.ToString() + " Module number " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
-                        iReceivers[step1][j] = a;
+                        jReceivers[j] = a;
                        
 
                        // MessageBox.Show("ReceiverCount "+ step1 + " Module "+stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr + " voltage: " + voltage + " temperature: " + y);
                         }
                     label7.Text = "Module information found";
                     label7.ForeColor = Color.Green;
-                    
-                    
+                    string json = JsonConvert.SerializeObject(jReceivers);
+                    iReceivers[step1] = json;
                     }
                     else
                 {
@@ -253,18 +270,17 @@ namespace ledWFormsControl
                     label7.ForeColor = Color.Red;
                 }
                 
-
             }
+            PD.Modules = JsonConvert.SerializeObject(iReceivers);
+            MessageBox.Show(PD.ToString());
+           // Server server = new Server();
+            //server.SendRequest(PD);
+        
+}
+        
             // END
-        }
-        public class PostData
-        {
-            public int SendersCount { get; set; }
-            public ushort SenderID2 { get; set; }
-            public ushort SenderID1 { get; set; }
-            public int ReceiversCount { get; set; }
-           // public string Modules 
-        }
+           
+        
     }               
     
 

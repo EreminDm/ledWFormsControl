@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ledWFormsControl
 {
-    class Server
+    public class Server
     {
         public void SendRequest(object postData)
         {

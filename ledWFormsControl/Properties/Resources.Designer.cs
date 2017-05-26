@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ledWFormsControl.Properties
+namespace ledWFormsControl1.Properties
 {
 
 
