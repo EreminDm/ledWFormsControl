@@ -8,9 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
-
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 
 namespace ledWFormsControl
 {
@@ -24,7 +22,8 @@ namespace ledWFormsControl
         ushort senderID1;
         ushort senderID2;
         int FoundReceivers;
-        
+        bool ReceiverSearchingStatus = true;
+
         public class PostData
         {
             public int SendersCount;
@@ -36,15 +35,6 @@ namespace ledWFormsControl
         }
         PostData PD = new PostData();
 
-        struct tagApiBigWord
-        {
-            byte hi;
-            byte lo;
-            public ushort GetWord()
-            {
-                return (ushort)(this.hi << 8 + this.lo);
-            }
-        };
        
         public Form1()
         {
@@ -80,7 +70,16 @@ namespace ledWFormsControl
             {
                 button2.PerformClick();
             });
-            Thread.Sleep(60000);
+
+            while (ReceiverSearchingStatus == true)
+            {
+                Thread.Sleep(10000);
+                button3.Invoke((MethodInvoker)delegate
+                {
+                    button3.PerformClick();
+                });
+            }
+            Thread.Sleep(5000);
             button3.Invoke((MethodInvoker)delegate
             {
                 button3.PerformClick();
@@ -147,7 +146,6 @@ namespace ledWFormsControl
                         label3.Text = "Initialization complete";
                         label3.ForeColor = Color.Green;
                     });
-                    NativeMethods.ReStartReceivers();
                 }
             }
             else
@@ -162,25 +160,34 @@ namespace ledWFormsControl
             
         }
 
+        
         private void SearchReceivers()
         {
+
             NativeMethods.ReSearchReceivers();
-            if (NativeMethods.IsSearchingReceiver())
+            
+            
+            
+        }
+
+        private void  isReceiversearching()
+        {
+            
+            if (NativeMethods.IsSearchingReceiver() == true)
             {
-                //MessageBox.Show("research receivers is started!");
-                //Console.WriteLine("wait until searching is end");
+                
+                button3.Invoke((MethodInvoker)delegate
+                {
+                    button3.PerformClick();
+                });
             }
             else
             {
-                //MessageBox.Show("Brocken");
-                label6.Invoke((MethodInvoker)delegate
-                {
-                    label6.Text = "Receivers search canceled";
-                    label6.ForeColor = Color.Red;
-                });
-            }         
+               
+            }
+            
         }
-
+        
         private void button1_Click(object sender, EventArgs e)
         {
             InitSenders();
@@ -193,7 +200,20 @@ namespace ledWFormsControl
 
         private void button3_Click(object sender, EventArgs e)
         {
-            NativeMethods.StopSearchReceiver();
+            bool a = NativeMethods.IsSearchingReceiver();
+          
+                if (a == true)
+                {
+                     ReceiverSearchingStatus = true;
+
+                }
+                else
+                {
+                    ReceiverSearchingStatus = false;
+
+                }
+
+            //NativeMethods.StopSearchReceiver();
             //MessageBox.Show("Search method is stoped");
         }
 
@@ -201,7 +221,7 @@ namespace ledWFormsControl
         {
             FoundReceivers = NativeMethods.GetFoundReceiverCount();
             PD.ReceiversCount = FoundReceivers;
-            if (FoundReceivers == 0)
+            if (FoundReceivers < 1)
             {
                     label6.Text = "Receivers not found";
                     label6.ForeColor = Color.Orange;
@@ -248,41 +268,51 @@ namespace ledWFormsControl
             int x, y;
             double voltage;
             int j;
-            for (int step1 = 0; step1 < FoundReceivers; step1++)
+            if (FoundReceivers < 1)
+            {
+                label7.Text = "Module information not found";
+                label7.ForeColor = Color.Red;
+            }
+            else
             {
 
-                if (NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, (ushort)step1))
+            
+                for (int step1 = 0; step1 < FoundReceivers; step1++)
+                {
+
+                    if (NativeMethods.QueryReceiverModuleDetailInfo(out stModuleDetailInfo, (ushort)step1))
                     {
-                    ushort ModuleAmount = stModuleDetailInfo.nRealModuleAmount;
-                    string[] jReceivers = new string[ModuleAmount];
-                    if (ModuleAmount < 1) {
-                        label7.Text = "Module amount information not found";
-                        label7.ForeColor = Color.Red;
-                    }
-                    else { 
-                        for (j = 0; j < ModuleAmount; j++)
+                        ushort ModuleAmount = stModuleDetailInfo.nRealModuleAmount;
+                        string[] jReceivers = new string[ModuleAmount];
+                        if (ModuleAmount < 1) {
+                            label7.Text = "Module amount information not found";
+                            label7.ForeColor = Color.Red;
+                        }
+                        else {
+                            for (j = 0; j < ModuleAmount; j++)
                             {
                                 x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
                                 voltage = x * 32 / 1000.0;
                                 y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
-                            string a = "ReceiverCountValue " + step1.ToString() + " Module number " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
-                            jReceivers[j] = a;
-                       
+                                string a = "ReceiverCountValue " + step1.ToString() + " Module number " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
+                                jReceivers[j] = a;
 
-                           // MessageBox.Show("ReceiverCount "+ step1 + " Module "+stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr + " voltage: " + voltage + " temperature: " + y);
+
+                                // MessageBox.Show("ReceiverCount "+ step1 + " Module "+stModuleDetailInfo.stReceiverModlInfo[j].byModuleAddr + " voltage: " + voltage + " temperature: " + y);
                             }
-                        label7.Text = "Module information found";
-                        label7.ForeColor = Color.Green;
-                        string json = JsonConvert.SerializeObject(jReceivers);
-                        iReceivers[step1] = json;
+                            label7.Text = "Module information found";
+                            label7.ForeColor = Color.Green;
+                            string json = JsonConvert.SerializeObject(jReceivers);
+                            iReceivers[step1] = json;
+                        }
                     }
-                }
                     else
-                {
-                    label7.Text = "Module information not found";
-                    label7.ForeColor = Color.Red;
+                    {
+                        label7.Text = "Module information not found";
+                        label7.ForeColor = Color.Red;
+                    }
+
                 }
-                
             }
            PD.Modules = JsonConvert.SerializeObject(iReceivers);
            Server server = new Server();
