@@ -32,6 +32,7 @@ namespace ledWFormsControl
             public int ReceiversCount;
             public string Modules;
             public bool DVIinput;
+            public string Time;
         }
         PostData PD = new PostData();
 
@@ -315,8 +316,10 @@ namespace ledWFormsControl
                 }
             }
            PD.Modules = JsonConvert.SerializeObject(iReceivers);
-           Server server = new Server();
-           server.SendRequest(PD);
+           PD.Time = DateTime.Now.ToString("HH:mm:ss");
+
+            Server server = new Server();
+           server.SendRequest(PD, false);
         }
             // END get module info
     }
