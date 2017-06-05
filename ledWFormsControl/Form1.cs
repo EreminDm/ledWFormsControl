@@ -35,9 +35,8 @@ namespace ledWFormsControl
             public string Time;
         }
         PostData PD = new PostData();
-
        
-        public Form1()
+        public Form1(string p, string p2)
         {
             InitializeComponent();
 
