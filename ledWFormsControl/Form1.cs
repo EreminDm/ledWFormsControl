@@ -23,6 +23,8 @@ namespace ledWFormsControl
         ushort senderID2;
         int FoundReceivers;
         bool ReceiverSearchingStatus = true;
+        string ServerIp;
+        bool boolSendToServer;
 
         public class PostData
         {
@@ -39,7 +41,15 @@ namespace ledWFormsControl
         public Form1(string p, string p2)
         {
             InitializeComponent();
-
+            ServerIp = p;
+            if (p2 == "true")
+            {
+                boolSendToServer = true;
+            }
+            else
+            {
+                boolSendToServer = false;
+            }
             BackgroundWorker BW = new BackgroundWorker();
             BW.DoWork += BW_DoWork;
             BW.RunWorkerAsync();
@@ -314,7 +324,7 @@ namespace ledWFormsControl
            PD.Time = DateTime.Now.ToString("HH:mm:ss");
 
             Server server = new Server();
-           server.SendRequest(PD, false);
+           server.SendRequest(PD, boolSendToServer, ServerIp);
         }
             // END get module info
     }

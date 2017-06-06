@@ -15,7 +15,7 @@ namespace ledWFormsControl
     public class Server
     {
         
-        public void SendRequest(object sendingData, bool sendData)
+        public void SendRequest(object sendingData, bool sendData, string serverIP)
         {
             var date = DateTime.Now.ToString("yyyy-dd-M");
             using (StreamWriter file = File.AppendText(@"C:\senderLog\log" + date + ".txt"))
@@ -28,7 +28,7 @@ namespace ledWFormsControl
             }
             if(sendData)
             {
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://192.168.2.108:8080");
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://"+ serverIP +":8080");
 
                 string postDataJSON = JsonConvert.SerializeObject(sendingData);
                 var Data = Encoding.ASCII.GetBytes(postDataJSON);
@@ -48,15 +48,8 @@ namespace ledWFormsControl
                 var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
             }
 
-
-
-            Thread.Sleep(15000);
+            Thread.Sleep(5000);
             Application.Exit();
-
-        }
-
-        public void getParam(string oiu, string pau)
-        {
 
         }
     }
