@@ -54,5 +54,10 @@ namespace ledWFormsControl
             Application.Exit();
 
         }
+
+        public void getParam(string oiu, string pau)
+        {
+
+        }
     }
 }
