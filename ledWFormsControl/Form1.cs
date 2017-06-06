@@ -48,7 +48,6 @@ namespace ledWFormsControl
 
         private void BW_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<string> InfoList = new List<string>();
 
             Thread.Sleep(500);
             label3.Invoke((MethodInvoker)delegate
@@ -213,9 +212,6 @@ namespace ledWFormsControl
                     ReceiverSearchingStatus = false;
 
                 }
-
-            //NativeMethods.StopSearchReceiver();
-            //MessageBox.Show("Search method is stoped");
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -295,7 +291,7 @@ namespace ledWFormsControl
                                 x = stModuleDetailInfo.stReceiverModlInfo[j].byModuleVoltage;
                                 voltage = x * 32 / 1000.0;
                                 y = stModuleDetailInfo.stReceiverModlInfo[j].sbyModuleTemperature;
-                                string a = "ReceiverCountValue " + step1.ToString() + " Module number " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
+                                string a = "ReceiverCountValue: " + step1.ToString() + " Module number: " + j.ToString() + " voltage: " + voltage.ToString() + " temperature: " + y.ToString();
                                 jReceivers[j] = a;
 
 

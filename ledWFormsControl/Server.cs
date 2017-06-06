@@ -20,9 +20,10 @@ namespace ledWFormsControl
             var date = DateTime.Now.ToString("yyyy-dd-M");
             using (StreamWriter file = File.AppendText(@"C:\senderLog\log" + date + ".txt"))
             {
-                JsonSerializer serializer = new JsonSerializer();
+               
+                string json = JsonConvert.SerializeObject(sendingData);
+                file.WriteLine(json + Environment.NewLine);
                 //serialize object directly into file stream
-                serializer.Serialize(file, sendingData);
 
             }
             if(sendData)
