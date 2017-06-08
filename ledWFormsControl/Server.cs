@@ -47,9 +47,8 @@ namespace ledWFormsControl
 
                 var responseString = new StreamReader(response.GetResponseStream()).ReadToEnd();
             }
-
             Thread.Sleep(5000);
-            Application.Exit();
+            //Application.Exit();
 
         }
     }

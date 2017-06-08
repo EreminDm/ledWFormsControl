@@ -25,6 +25,7 @@ namespace ledWFormsControl
         bool ReceiverSearchingStatus = true;
         string ServerIp;
         bool boolSendToServer;
+        byte brit;
 
         public class PostData
         {
@@ -120,7 +121,6 @@ namespace ledWFormsControl
         public void InitSenders()
         {
             // Initialization senders
-            
 
             if (NativeMethods.ReConnectSender())
             {
@@ -172,10 +172,7 @@ namespace ledWFormsControl
         
         private void SearchReceivers()
         {
-
             NativeMethods.ReSearchReceivers();
-            
-            
             
         }
 
@@ -281,8 +278,6 @@ namespace ledWFormsControl
             }
             else
             {
-
-            
                 for (int step1 = 0; step1 < FoundReceivers; step1++)
                 {
 
@@ -326,7 +321,72 @@ namespace ledWFormsControl
             Server server = new Server();
            server.SendRequest(PD, boolSendToServer, ServerIp);
         }
-            // END get module info
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            //Manual brightness set
+            var brightnessValue = Int32.Parse(maskedTextBox13.Text);
+            if (brightnessValue>100)
+            {
+                brightnessValue = 100;
+            }
+            NativeMethods.SetDisplayBrightness((byte)brightnessValue);            
+           
+        }
+        private void button8_Click(object sender, EventArgs e)
+        {
+            // auto brightness set
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            // autobrightness checkbox
+           // checkBox1.CheckState = CheckState.Checked;
+            maskedTextBox13.Enabled = false;
+            button8.Enabled = true;
+ 
+            maskedTextBox1.Enabled = true;
+            maskedTextBox2.Enabled = true;
+            maskedTextBox3.Enabled = true;
+            maskedTextBox4.Enabled = true;
+            maskedTextBox5.Enabled = true;
+            maskedTextBox6.Enabled = true;
+            maskedTextBox7.Enabled = true;
+            maskedTextBox8.Enabled = true;
+            maskedTextBox9.Enabled = true;
+            maskedTextBox10.Enabled = true;
+            maskedTextBox11.Enabled = true;
+            maskedTextBox12.Enabled = true;
+
+
+        }
+
+        private void checkBox2_CheckedChanged(object sender, EventArgs e)
+        {
+            // manual brightness checkbox
+            //checkBox2.CheckState = CheckState.Checked;
+           // checkBox2.Checked = true;
+            maskedTextBox13.Enabled = true;
+            maskedTextBox1.Enabled = false;
+            maskedTextBox2.Enabled = false;
+            maskedTextBox3.Enabled = false;
+            maskedTextBox4.Enabled = false;
+            maskedTextBox5.Enabled = false;
+            maskedTextBox6.Enabled = false;
+            maskedTextBox7.Enabled = false;
+            maskedTextBox8.Enabled = false;
+            maskedTextBox9.Enabled = false;
+            maskedTextBox10.Enabled = false;
+            maskedTextBox11.Enabled = false;
+            maskedTextBox12.Enabled = false;
+            button8.Enabled = false;
+
+
+        }
+
+        
+
+        // END get module info
     }
 }
 

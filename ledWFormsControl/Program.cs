@@ -21,7 +21,6 @@ namespace ledWFormsControl
                 var IP = args[0];
                 var trySendInfoToServer = args[1];
                 Server ser = new Server();
-                ser.getParam(IP, trySendInfoToServer);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
                 Application.Run(new Form1(IP, trySendInfoToServer));
