@@ -56,10 +56,29 @@ namespace ledWFormsControl
             //BW.DoWork += BW_DoWork;
             //BW.RunWorkerAsync();
 
+            fillLstShedule();
+            
+            //Thread thr = new Thread(CheckDisplay);
+            //thr.IsBackground = true;
+            //thr.Start();
+        }
 
-            Thread thr = new Thread(CheckDisplay);
-            thr.IsBackground = true;
-            thr.Start();
+        private void fillLstShedule()
+        {
+            using (StreamReader r = new StreamReader("time.json"))
+            {
+                string json = r.ReadToEnd();
+
+                dynamic array = JsonConvert.DeserializeObject(json);
+                foreach (var item in array)
+                {
+                    ListViewItem itm = new ListViewItem((String)item.Name);
+
+                    itm.SubItems.Add((String)item.Value );
+
+                    lstShedule.Items.Add(itm);
+                }
+            }
         }
 
         private void Connect()
@@ -156,6 +175,7 @@ namespace ledWFormsControl
                 string json = r.ReadToEnd();
 
                 dynamic array = JsonConvert.DeserializeObject(json);
+                
                 foreach (var item in array)
                 {
                     TimeSpan t = TimeSpan.Parse(item.Name);
@@ -170,7 +190,6 @@ namespace ledWFormsControl
                     }
                 }
                 NativeMethods.SetDisplayBrightness((byte)brightnessValue);
-
             }
         }
 
@@ -463,19 +482,20 @@ namespace ledWFormsControl
             maskedTextBox13.Enabled = false;
             button8.Enabled = true;
  
-            maskedTextBox1.Enabled = true;
+            txtTime.Enabled = true;
+            /*
             maskedTextBox2.Enabled = true;
             maskedTextBox3.Enabled = true;
             maskedTextBox4.Enabled = true;
             maskedTextBox5.Enabled = true;
             maskedTextBox6.Enabled = true;
-            maskedTextBox7.Enabled = true;
+            txtBrightness.Enabled = true;
             maskedTextBox8.Enabled = true;
             maskedTextBox9.Enabled = true;
             maskedTextBox10.Enabled = true;
             maskedTextBox11.Enabled = true;
             maskedTextBox12.Enabled = true;
-
+            */
 
         }
 
@@ -483,26 +503,70 @@ namespace ledWFormsControl
         {
             // manual brightness checkbox
             //checkBox2.CheckState = CheckState.Checked;
-           // checkBox2.Checked = true;
-            maskedTextBox13.Enabled = true;
-            maskedTextBox1.Enabled = false;
-            maskedTextBox2.Enabled = false;
-            maskedTextBox3.Enabled = false;
-            maskedTextBox4.Enabled = false;
-            maskedTextBox5.Enabled = false;
-            maskedTextBox6.Enabled = false;
-            maskedTextBox7.Enabled = false;
-            maskedTextBox8.Enabled = false;
-            maskedTextBox9.Enabled = false;
-            maskedTextBox10.Enabled = false;
-            maskedTextBox11.Enabled = false;
-            maskedTextBox12.Enabled = false;
-            button8.Enabled = false;
+            // checkBox2.Checked = true;
+            //maskedTextBox13.Enabled = true;
+            //txtTime.Enabled = false;
+            //maskedTextBox2.Enabled = false;
+            //maskedTextBox3.Enabled = false;
+            //maskedTextBox4.Enabled = false;
+            //maskedTextBox5.Enabled = false;
+            // maskedTextBox6.Enabled = false;
+            //txtBrightness.Enabled = false;
+            //maskedTextBox8.Enabled = false;
+            //maskedTextBox9.Enabled = false;
+            //maskedTextBox10.Enabled = false;
+            //maskedTextBox11.Enabled = false;
+            //maskedTextBox12.Enabled = false;
+            //button8.Enabled = false;
 
 
         }
 
-        
+        private void btnEditShedule_Click(object sender, EventArgs e)
+        {
+            ListView.SelectedListViewItemCollection lv = lstShedule.SelectedItems;
+            if (lv.Count > 0){ 
+                txtTime.Text = lv[0].Text;
+                txtBrightness.Text = lv[0].SubItems[1].Text;
+                lstShedule.Items.Remove(lv[0]);
+                lstShedule.Refresh();
+                writeToFile();
+            }
+        }
+
+        private void writeToFile()
+        {
+            Dictionary<String, int> d = new Dictionary<String, int>();
+            foreach (ListViewItem item in lstShedule.Items)
+            {
+                d[item.Text] = Int32.Parse(item.SubItems[1].Text);
+            }
+            String s = JsonConvert.SerializeObject(d);
+
+            using (StreamWriter w = new StreamWriter("time.json"))
+            {
+                w.Write(s);
+            }
+
+        }
+
+
+        private void btnApplyEditShedule_Click(object sender, EventArgs e)
+        {
+            if (!txtTime.Text.Equals("") & !txtBrightness.Text.Equals("")) { 
+                ListViewItem itm = new ListViewItem((String)txtTime.Text);
+
+                itm.SubItems.Add((String)txtBrightness.Text);
+
+                lstShedule.Items.Add(itm);
+                writeToFile();
+
+                txtTime.Text = "";
+                txtBrightness.Text = "";
+            }
+        }
+
+
 
         // END get module info
     }
