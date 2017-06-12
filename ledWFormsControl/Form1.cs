@@ -25,9 +25,9 @@ namespace ledWFormsControl
         int FoundReceivers;
         bool ReceiverSearchingStatus = true;
         string ServerIp;
+        string ServerPort;
         bool boolSendToServer;
-        byte brit;
-
+       
         public class PostData
         {
             public int SendersCount;
@@ -61,6 +61,32 @@ namespace ledWFormsControl
             //Thread thr = new Thread(CheckDisplay);
             //thr.IsBackground = true;
             //thr.Start();
+        }
+
+        //start button
+        private void button8_Click_1(object sender, EventArgs e)
+        {
+            ServerIp = textBox1.Text;
+            ServerPort = textBox2.Text;
+            if(checkBox3.Checked)
+            {
+                boolSendToServer = true;
+            }
+            else
+            {
+                boolSendToServer = false;
+            }
+
+            Thread thr = new Thread(CheckDisplay);
+            thr.IsBackground = true;
+            thr.Start();
+        }
+
+        //stop program
+        private void button9_Click(object sender, EventArgs e)
+        {
+            Thread thr = new Thread(CheckDisplay);
+            thr.Abort();
         }
 
         private void fillLstShedule()
@@ -159,37 +185,40 @@ namespace ledWFormsControl
                     button6.PerformClick();
                 });
             }
-
-            Thread.Sleep(3000);
         }
 
         private void setBrightness()
         {
-            DateTime localDate = DateTime.Now;
-            TimeSpan ct = localDate.TimeOfDay;
-            var brightnessValue = 0;
-
-
-            using (StreamReader r = new StreamReader("time.json"))
+            if (checkBox1.Checked)
             {
-                string json = r.ReadToEnd();
+                checkBox2.Checked = false;
 
-                dynamic array = JsonConvert.DeserializeObject(json);
-                
-                foreach (var item in array)
+                DateTime localDate = DateTime.Now;
+                TimeSpan ct = localDate.TimeOfDay;
+                var brightnessValue = 0;
+
+
+                using (StreamReader r = new StreamReader("time.json"))
                 {
-                    TimeSpan t = TimeSpan.Parse(item.Name);
-                    if (ct > t)
-                    {
-                        brightnessValue = item.Value;
+                    string json = r.ReadToEnd();
 
-                    }
-                    else
+                    dynamic array = JsonConvert.DeserializeObject(json);
+
+                    foreach (var item in array)
                     {
-                        break;
+                        TimeSpan t = TimeSpan.Parse(item.Name);
+                        if (ct > t)
+                        {
+                            brightnessValue = item.Value;
+
+                        }
+                        else
+                        {
+                            break;
+                        }
                     }
+                    NativeMethods.SetDisplayBrightness((byte)brightnessValue);
                 }
-                NativeMethods.SetDisplayBrightness((byte)brightnessValue);
             }
         }
 
@@ -456,7 +485,7 @@ namespace ledWFormsControl
            PD.Time = DateTime.Now.ToString("HH:mm:ss");
 
             Server server = new Server();
-           server.SendRequest(PD, boolSendToServer, ServerIp);
+           server.SendRequest(PD, boolSendToServer, ServerIp, ServerPort);
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -475,52 +504,23 @@ namespace ledWFormsControl
             // auto brightness set
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            // autobrightness checkbox
-           // checkBox1.CheckState = CheckState.Checked;
-            maskedTextBox13.Enabled = false;
-            button8.Enabled = true;
- 
-            txtTime.Enabled = true;
-            /*
-            maskedTextBox2.Enabled = true;
-            maskedTextBox3.Enabled = true;
-            maskedTextBox4.Enabled = true;
-            maskedTextBox5.Enabled = true;
-            maskedTextBox6.Enabled = true;
-            txtBrightness.Enabled = true;
-            maskedTextBox8.Enabled = true;
-            maskedTextBox9.Enabled = true;
-            maskedTextBox10.Enabled = true;
-            maskedTextBox11.Enabled = true;
-            maskedTextBox12.Enabled = true;
-            */
 
-        }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            // manual brightness checkbox
-            //checkBox2.CheckState = CheckState.Checked;
-            // checkBox2.Checked = true;
-            //maskedTextBox13.Enabled = true;
-            //txtTime.Enabled = false;
-            //maskedTextBox2.Enabled = false;
-            //maskedTextBox3.Enabled = false;
-            //maskedTextBox4.Enabled = false;
-            //maskedTextBox5.Enabled = false;
-            // maskedTextBox6.Enabled = false;
-            //txtBrightness.Enabled = false;
-            //maskedTextBox8.Enabled = false;
-            //maskedTextBox9.Enabled = false;
-            //maskedTextBox10.Enabled = false;
-            //maskedTextBox11.Enabled = false;
-            //maskedTextBox12.Enabled = false;
-            //button8.Enabled = false;
-
-
+            if (checkBox2.Checked)
+            {
+                checkBox1.Checked = false;
+            }
         }
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBox1.Checked)
+            {
+                checkBox2.Checked = false;
+            }
+        }
+
 
         private void btnEditShedule_Click(object sender, EventArgs e)
         {
@@ -566,8 +566,7 @@ namespace ledWFormsControl
             }
         }
 
-
-
+       
         // END get module info
     }
 }

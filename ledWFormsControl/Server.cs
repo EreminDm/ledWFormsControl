@@ -15,7 +15,7 @@ namespace ledWFormsControl
     public class Server
     {
         
-        public void SendRequest(object sendingData, bool sendData, string serverIP)
+        public void SendRequest(object sendingData, bool sendData, string serverIP, string serverPort)
         {
             var date = DateTime.Now.ToString("yyyy-dd-M");
             using (StreamWriter file = File.AppendText(@"C:\senderLog\log" + date + ".txt"))
