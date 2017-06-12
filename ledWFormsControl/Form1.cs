@@ -9,6 +9,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Newtonsoft.Json;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace ledWFormsControl
 {
@@ -51,9 +52,126 @@ namespace ledWFormsControl
             {
                 boolSendToServer = false;
             }
-            BackgroundWorker BW = new BackgroundWorker();
-            BW.DoWork += BW_DoWork;
-            BW.RunWorkerAsync();
+            //BackgroundWorker BW = new BackgroundWorker();
+            //BW.DoWork += BW_DoWork;
+            //BW.RunWorkerAsync();
+
+
+            Thread thr = new Thread(CheckDisplay);
+            thr.IsBackground = true;
+            thr.Start();
+        }
+
+        private void Connect()
+        {
+            Thread.Sleep(500);
+            label3.Invoke((MethodInvoker)delegate
+            {
+                label3.Text = "Senders initialization...";
+                label3.ForeColor = Color.Blue;
+            });
+            Thread.Sleep(300);
+            button1.Invoke((MethodInvoker)delegate
+            {
+                button1.PerformClick();
+            });
+
+
+            Thread.Sleep(5000);
+            label6.Invoke((MethodInvoker)delegate
+            {
+                label6.Text = "Searching receivers...";
+                label6.ForeColor = Color.Blue;
+            });
+            button2.Invoke((MethodInvoker)delegate
+            {
+                button2.PerformClick();
+            });
+
+            while (ReceiverSearchingStatus == true)
+            {
+                Thread.Sleep(10000);
+                button3.Invoke((MethodInvoker)delegate
+                {
+                    button3.PerformClick();
+                });
+            }
+            Thread.Sleep(5000);
+            button3.Invoke((MethodInvoker)delegate
+            {
+                button3.PerformClick();
+            });
+            Thread.Sleep(300);
+            button4.Invoke((MethodInvoker)delegate
+            {
+                button4.PerformClick();
+            });
+            Thread.Sleep(300);
+            button5.Invoke((MethodInvoker)delegate
+            {
+                button5.PerformClick();
+            });
+
+        }
+
+        private void CheckDisplay()
+        {
+            while (true)
+            {
+                FoundReceivers = NativeMethods.GetFoundReceiverCount();
+
+                if (FoundReceivers < 1)
+                {
+                    Connect();
+                }
+
+
+                Thread.Sleep(300);
+                setBrightness();
+                Thread.Sleep(300);
+                label7.Invoke((MethodInvoker)delegate
+                {
+                    label7.Text = "Searching module info...";
+                    label7.ForeColor = Color.Blue;
+                });
+                Thread.Sleep(500);
+                button6.Invoke((MethodInvoker)delegate
+                {
+                    button6.PerformClick();
+                });
+            }
+
+            Thread.Sleep(3000);
+        }
+
+        private void setBrightness()
+        {
+            DateTime localDate = DateTime.Now;
+            TimeSpan ct = localDate.TimeOfDay;
+            var brightnessValue = 0;
+
+
+            using (StreamReader r = new StreamReader("time.json"))
+            {
+                string json = r.ReadToEnd();
+
+                dynamic array = JsonConvert.DeserializeObject(json);
+                foreach (var item in array)
+                {
+                    TimeSpan t = TimeSpan.Parse(item.Name);
+                    if (ct > t)
+                    {
+                        brightnessValue = item.Value;
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                NativeMethods.SetDisplayBrightness((byte)brightnessValue);
+
+            }
         }
 
         private void BW_DoWork(object sender, DoWorkEventArgs e)

@@ -9,7 +9,7 @@ namespace ledWFormsControl
     using System.Runtime.InteropServices;
     class NativeMethods
     {
-        public const string DllName = @"C:\Users\BBV\Documents\visual studio 2017\Projects\ledWFormsControl\ledWFormsControl\bin\x86\Debug\LED_Setup_Interface.dll";
+        public const string DllName = "LED_Setup_Interface.dll";
 
         /// <summary>
         /// 接收卡Hub板最大端口数
