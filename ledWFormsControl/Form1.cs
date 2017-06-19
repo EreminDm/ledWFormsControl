@@ -21,6 +21,7 @@ namespace ledWFormsControl
        
         int[] senderIDs = new int[2];
 
+        DateTime cdt;
         
 
         // Params wich send to post method
@@ -225,13 +226,23 @@ namespace ledWFormsControl
                 button2.PerformClick();
             });
 
+            cdt = DateTime.Now; 
+
+
             while (ReceiverSearchingStatus == true)
             {
+                
                 Thread.Sleep(10000);
                 button3.Invoke((MethodInvoker)delegate
                 {
                     button3.PerformClick();
                 });
+
+                if ((DateTime.Now - cdt).Seconds > 30)
+                {
+                    ReceiverSearchingStatus = false;
+                    NativeMethods.StopSearchReceiver();
+                }
             }
             Thread.Sleep(5000);
             button3.Invoke((MethodInvoker)delegate
@@ -259,6 +270,8 @@ namespace ledWFormsControl
             {
                 
                 FoundReceivers = NativeMethods.GetFoundReceiverCount();
+                
+
 
                 if (FoundReceivers < 1)
                 {
@@ -349,6 +362,7 @@ namespace ledWFormsControl
 
             while (ReceiverSearchingStatus == true)
             {
+                
                 Thread.Sleep(10000);
                 button3.Invoke((MethodInvoker)delegate
                 {
