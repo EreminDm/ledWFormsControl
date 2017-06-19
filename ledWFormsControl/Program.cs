@@ -16,18 +16,10 @@ namespace ledWFormsControl
         [STAThread]
         static void Main(string[] args)
         {
-            if (args.Length > 0)
-            {
-                var IP = args[0];
-                var trySendInfoToServer = args[1];
-                Server ser = new Server();
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new Form1(IP, trySendInfoToServer));
-            } else
-            {
-                MessageBox.Show("No args");
-            }
+            Server ser = new Server();
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Form1());   
         }
     }
 }

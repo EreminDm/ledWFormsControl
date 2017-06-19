@@ -15,9 +15,13 @@ namespace ledWFormsControl
 {
     public partial class Form1 : Form
     {
+        Thread thr;
+        
         ushort sendersCount;
        
         int[] senderIDs = new int[2];
+
+        
 
         // Params wich send to post method
         ushort senderID1;
@@ -39,28 +43,16 @@ namespace ledWFormsControl
             public string Time;
         }
         PostData PD = new PostData();
-       
-        public Form1(string p, string p2)
+
+        //public Form1(string p, string p2)
+        public Form1()
         {
             InitializeComponent();
-            ServerIp = p;
-            if (p2 == "true")
-            {
-                boolSendToServer = true;
-            }
-            else
-            {
-                boolSendToServer = false;
-            }
-            //BackgroundWorker BW = new BackgroundWorker();
-            //BW.DoWork += BW_DoWork;
-            //BW.RunWorkerAsync();
+
+            fillIP();
 
             fillLstShedule();
             
-            //Thread thr = new Thread(CheckDisplay);
-            //thr.IsBackground = true;
-            //thr.Start();
         }
 
         //start button
@@ -77,15 +69,17 @@ namespace ledWFormsControl
                 boolSendToServer = false;
             }
 
-            Thread thr = new Thread(CheckDisplay);
+            writeIPToFile();
+
+            thr = new Thread(CheckDisplay);
             thr.IsBackground = true;
             thr.Start();
+   
         }
 
         //stop program
         private void button9_Click(object sender, EventArgs e)
         {
-            Thread thr = new Thread(CheckDisplay);
             thr.Abort();
         }
 
@@ -107,6 +101,42 @@ namespace ledWFormsControl
             }
         }
 
+        private void fillIP()
+        {
+            using (StreamReader r = new StreamReader("send.json"))
+            {
+                string json = r.ReadToEnd();
+
+                dynamic array = JsonConvert.DeserializeObject(json);
+                foreach (var item in array)
+                {
+                    if(item.Name == "send")
+                    {
+                        if(item.Value == "True")
+                        {
+                            checkBox3.Checked = true;
+                            boolSendToServer = true;
+                        }
+
+                        if (item.Value == "False")
+                        {
+                            checkBox3.Checked = false;
+                            boolSendToServer = false;
+                        }
+                    }
+                    else
+                    {
+                        ServerIp = item.Name;
+                        textBox1.Text = item.Name;
+
+                        ServerPort = item.Value;
+                        textBox2.Text = item.Value;
+                    }
+                }
+            }
+        }
+
+        /*
         private void Connect()
         {
             Thread.Sleep(500);
@@ -158,18 +188,88 @@ namespace ledWFormsControl
             });
 
         }
+        */
+
+        private void Connect()
+        {
+            Thread.Sleep(500);
+            label3.Invoke((MethodInvoker)delegate
+            {
+                label3.Text = "Senders initialization...";
+                label3.ForeColor = Color.Blue;
+            });
+            Thread.Sleep(300);
+            button1.Invoke((MethodInvoker)delegate
+            {
+                button1.PerformClick();
+            });
+
+
+            
+
+        }
+
+        private void Connect2()
+        {
+            
+
+
+            Thread.Sleep(5000);
+            label6.Invoke((MethodInvoker)delegate
+            {
+                label6.Text = "Searching receivers...";
+                label6.ForeColor = Color.Blue;
+            });
+            button2.Invoke((MethodInvoker)delegate
+            {
+                button2.PerformClick();
+            });
+
+            while (ReceiverSearchingStatus == true)
+            {
+                Thread.Sleep(10000);
+                button3.Invoke((MethodInvoker)delegate
+                {
+                    button3.PerformClick();
+                });
+            }
+            Thread.Sleep(5000);
+            button3.Invoke((MethodInvoker)delegate
+            {
+                button3.PerformClick();
+            });
+            Thread.Sleep(300);
+            button4.Invoke((MethodInvoker)delegate
+            {
+                button4.PerformClick();
+            });
+            Thread.Sleep(300);
+            button5.Invoke((MethodInvoker)delegate
+            {
+                button5.PerformClick();
+            });
+
+        }
+
+
 
         private void CheckDisplay()
         {
             while (true)
             {
+                
                 FoundReceivers = NativeMethods.GetFoundReceiverCount();
 
                 if (FoundReceivers < 1)
                 {
                     Connect();
                 }
+                else
+                {
+                    
+                }
 
+                Connect2();
 
                 Thread.Sleep(300);
                 setBrightness();
@@ -298,6 +398,8 @@ namespace ledWFormsControl
                         label3.Text = "Initialization failed";
                         label3.ForeColor = Color.Red;
                     });
+
+                    
                 }
                 else
                 {
@@ -330,9 +432,10 @@ namespace ledWFormsControl
                     label3.Text = "Initialization failed";
                     label3.ForeColor = Color.Red;
                 });
+
             }
-                
-            
+
+
         }
 
         
@@ -394,6 +497,8 @@ namespace ledWFormsControl
             {
                     label6.Text = "Receivers not found";
                     label6.ForeColor = Color.Orange;
+
+
             }
             else
             {
@@ -420,6 +525,8 @@ namespace ledWFormsControl
                 }
                 else
                 {
+
+
                     PD.DVIinput = false;
                     label9.Text = "No DVI signal";
                     label9.ForeColor = Color.Red;
@@ -430,20 +537,24 @@ namespace ledWFormsControl
 
         private void button6_Click(object sender, EventArgs e)
         {
+            string[] iReceivers = new string[0];
 
-            string[] iReceivers = new string[FoundReceivers];
-            //START GEt module voltage and temperature Information
-            NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
-            int x, y;
-            double voltage;
-            int j;
             if (FoundReceivers < 1)
             {
                 label7.Text = "Module information not found";
                 label7.ForeColor = Color.Red;
+
+                
             }
             else
             {
+                iReceivers = new string[FoundReceivers];
+                //START GEt module voltage and temperature Information
+                NativeMethods.tagReceiverModuleDetailInfo stModuleDetailInfo;
+                int x, y;
+                double voltage;
+                int j;
+
                 for (int step1 = 0; step1 < FoundReceivers; step1++)
                 {
 
@@ -486,6 +597,8 @@ namespace ledWFormsControl
 
             Server server = new Server();
            server.SendRequest(PD, boolSendToServer, ServerIp, ServerPort);
+
+
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -547,6 +660,24 @@ namespace ledWFormsControl
             {
                 w.Write(s);
             }
+
+        }
+
+        private void writeIPToFile()
+        {
+            Dictionary<String, String> d = new Dictionary<String, String>();
+            
+            d[textBox1.Text] = textBox2.Text;
+            d["send"] = checkBox3.Checked.ToString();
+
+            String s = JsonConvert.SerializeObject(d);
+
+            using (StreamWriter w = new StreamWriter("send.json"))
+            {
+                w.Write(s);
+            }
+
+            
 
         }
 

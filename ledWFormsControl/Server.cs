@@ -28,7 +28,7 @@ namespace ledWFormsControl
             }
             if(sendData)
             {
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://"+ serverIP +":8080");
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://"+ serverIP +":"+serverPort);
 
                 string postDataJSON = JsonConvert.SerializeObject(sendingData);
                 var Data = Encoding.ASCII.GetBytes(postDataJSON);
