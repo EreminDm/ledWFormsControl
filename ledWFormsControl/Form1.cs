@@ -59,6 +59,9 @@ namespace ledWFormsControl
         //start button
         private void button8_Click_1(object sender, EventArgs e)
         {
+            button8.Enabled = false;
+            button9.Enabled = true;
+
             ServerIp = textBox1.Text;
             ServerPort = textBox2.Text;
             if(checkBox3.Checked)
@@ -72,6 +75,11 @@ namespace ledWFormsControl
 
             writeIPToFile();
 
+            if (FoundReceivers < 1)
+            {
+                Connect();
+            }
+
             thr = new Thread(CheckDisplay);
             thr.IsBackground = true;
             thr.Start();
@@ -81,6 +89,8 @@ namespace ledWFormsControl
         //stop program
         private void button9_Click(object sender, EventArgs e)
         {
+            button8.Enabled = true;
+            button9.Enabled = false;
             thr.Abort();
         }
 
@@ -137,59 +147,7 @@ namespace ledWFormsControl
             }
         }
 
-        /*
-        private void Connect()
-        {
-            Thread.Sleep(500);
-            label3.Invoke((MethodInvoker)delegate
-            {
-                label3.Text = "Senders initialization...";
-                label3.ForeColor = Color.Blue;
-            });
-            Thread.Sleep(300);
-            button1.Invoke((MethodInvoker)delegate
-            {
-                button1.PerformClick();
-            });
-
-
-            Thread.Sleep(5000);
-            label6.Invoke((MethodInvoker)delegate
-            {
-                label6.Text = "Searching receivers...";
-                label6.ForeColor = Color.Blue;
-            });
-            button2.Invoke((MethodInvoker)delegate
-            {
-                button2.PerformClick();
-            });
-
-            while (ReceiverSearchingStatus == true)
-            {
-                Thread.Sleep(10000);
-                button3.Invoke((MethodInvoker)delegate
-                {
-                    button3.PerformClick();
-                });
-            }
-            Thread.Sleep(5000);
-            button3.Invoke((MethodInvoker)delegate
-            {
-                button3.PerformClick();
-            });
-            Thread.Sleep(300);
-            button4.Invoke((MethodInvoker)delegate
-            {
-                button4.PerformClick();
-            });
-            Thread.Sleep(300);
-            button5.Invoke((MethodInvoker)delegate
-            {
-                button5.PerformClick();
-            });
-
-        }
-        */
+        
 
         private void Connect()
         {
@@ -204,9 +162,6 @@ namespace ledWFormsControl
             {
                 button1.PerformClick();
             });
-
-
-            
 
         }
 
@@ -221,6 +176,13 @@ namespace ledWFormsControl
                 label6.Text = "Searching receivers...";
                 label6.ForeColor = Color.Blue;
             });
+
+            label5.Invoke((MethodInvoker)delegate
+            {
+                label5.Text = "0";
+                label5.ForeColor = Color.Blue;
+            });
+
             button2.Invoke((MethodInvoker)delegate
             {
                 button2.PerformClick();
@@ -238,7 +200,7 @@ namespace ledWFormsControl
                     button3.PerformClick();
                 });
 
-                if ((DateTime.Now - cdt).Seconds > 30)
+                if ((DateTime.Now - cdt).Seconds > 90)
                 {
                     ReceiverSearchingStatus = false;
                     NativeMethods.StopSearchReceiver();
@@ -268,24 +230,16 @@ namespace ledWFormsControl
         {
             while (true)
             {
-                
                 FoundReceivers = NativeMethods.GetFoundReceiverCount();
                 
-
-
-                if (FoundReceivers < 1)
-                {
-                    Connect();
-                }
-                else
-                {
-                    
-                }
-
                 Connect2();
 
                 Thread.Sleep(300);
-                setBrightness();
+                if (FoundReceivers > 0)
+                {
+                    setBrightness();
+                }
+                 
                 Thread.Sleep(300);
                 label7.Invoke((MethodInvoker)delegate
                 {
@@ -330,73 +284,20 @@ namespace ledWFormsControl
                             break;
                         }
                     }
-                    NativeMethods.SetDisplayBrightness((byte)brightnessValue);
+                    try
+                    {
+                        NativeMethods.SetDisplayBrightness((byte)brightnessValue);
+                    }
+                    catch (Exception e)
+                    {
+
+                    }
+                    
                 }
             }
         }
 
-        private void BW_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-            Thread.Sleep(500);
-            label3.Invoke((MethodInvoker)delegate
-            {
-                label3.Text = "Senders initialization...";
-                label3.ForeColor = Color.Blue;
-            });
-            Thread.Sleep(300);
-            button1.Invoke((MethodInvoker)delegate
-            {
-                button1.PerformClick();
-            });
-            Thread.Sleep(5000);
-            label6.Invoke((MethodInvoker)delegate
-            {
-                label6.Text = "Searching receivers...";
-                label6.ForeColor = Color.Blue;
-            });
-            button2.Invoke((MethodInvoker)delegate
-            {
-                button2.PerformClick();
-            });
-
-            while (ReceiverSearchingStatus == true)
-            {
-                
-                Thread.Sleep(10000);
-                button3.Invoke((MethodInvoker)delegate
-                {
-                    button3.PerformClick();
-                });
-            }
-            Thread.Sleep(5000);
-            button3.Invoke((MethodInvoker)delegate
-            {
-                button3.PerformClick();
-            });
-            Thread.Sleep(300);
-            button4.Invoke((MethodInvoker)delegate
-            {
-                button4.PerformClick();
-            });
-            Thread.Sleep(300);
-            button5.Invoke((MethodInvoker)delegate
-            {
-                button5.PerformClick();
-            });
-            Thread.Sleep(300);
-            label7.Invoke((MethodInvoker)delegate
-            {
-                label7.Text = "Searching module info...";
-                label7.ForeColor = Color.Blue;
-            });
-            Thread.Sleep(500);
-            button6.Invoke((MethodInvoker)delegate
-            {
-                button6.PerformClick();
-            });
-
-        }        
+        
 
         public void InitSenders()
         {
@@ -790,3 +691,120 @@ namespace ledWFormsControl
 //}
 ////end get Bad Panels
 
+/*
+    private void Connect()
+    {
+        Thread.Sleep(500);
+        label3.Invoke((MethodInvoker)delegate
+        {
+            label3.Text = "Senders initialization...";
+            label3.ForeColor = Color.Blue;
+        });
+        Thread.Sleep(300);
+        button1.Invoke((MethodInvoker)delegate
+        {
+            button1.PerformClick();
+        });
+
+
+        Thread.Sleep(5000);
+        label6.Invoke((MethodInvoker)delegate
+        {
+            label6.Text = "Searching receivers...";
+            label6.ForeColor = Color.Blue;
+        });
+        button2.Invoke((MethodInvoker)delegate
+        {
+            button2.PerformClick();
+        });
+
+        while (ReceiverSearchingStatus == true)
+        {
+            Thread.Sleep(10000);
+            button3.Invoke((MethodInvoker)delegate
+            {
+                button3.PerformClick();
+            });
+        }
+        Thread.Sleep(5000);
+        button3.Invoke((MethodInvoker)delegate
+        {
+            button3.PerformClick();
+        });
+        Thread.Sleep(300);
+        button4.Invoke((MethodInvoker)delegate
+        {
+            button4.PerformClick();
+        });
+        Thread.Sleep(300);
+        button5.Invoke((MethodInvoker)delegate
+        {
+            button5.PerformClick();
+        });
+
+    }
+
+    private void BW_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            Thread.Sleep(500);
+            label3.Invoke((MethodInvoker)delegate
+            {
+                label3.Text = "Senders initialization...";
+                label3.ForeColor = Color.Blue;
+            });
+            Thread.Sleep(300);
+            button1.Invoke((MethodInvoker)delegate
+            {
+                button1.PerformClick();
+            });
+            Thread.Sleep(5000);
+            label6.Invoke((MethodInvoker)delegate
+            {
+                label6.Text = "Searching receivers...";
+                label6.ForeColor = Color.Blue;
+            });
+            button2.Invoke((MethodInvoker)delegate
+            {
+                button2.PerformClick();
+            });
+
+            while (ReceiverSearchingStatus == true)
+            {
+                
+                Thread.Sleep(10000);
+                button3.Invoke((MethodInvoker)delegate
+                {
+                    button3.PerformClick();
+                });
+            }
+            Thread.Sleep(5000);
+            button3.Invoke((MethodInvoker)delegate
+            {
+                button3.PerformClick();
+            });
+            Thread.Sleep(300);
+            button4.Invoke((MethodInvoker)delegate
+            {
+                button4.PerformClick();
+            });
+            Thread.Sleep(300);
+            button5.Invoke((MethodInvoker)delegate
+            {
+                button5.PerformClick();
+            });
+            Thread.Sleep(300);
+            label7.Invoke((MethodInvoker)delegate
+            {
+                label7.Text = "Searching module info...";
+                label7.ForeColor = Color.Blue;
+            });
+            Thread.Sleep(500);
+            button6.Invoke((MethodInvoker)delegate
+            {
+                button6.PerformClick();
+            });
+
+        }        
+
+    */
