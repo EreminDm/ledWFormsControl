@@ -61,6 +61,7 @@
             this.label8 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.button9 = new System.Windows.Forms.Button();
+            this.btnSetDefaultBrightness = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -196,7 +197,7 @@
             // 
             // button7
             // 
-            this.button7.Location = new System.Drawing.Point(328, 323);
+            this.button7.Location = new System.Drawing.Point(368, 273);
             this.button7.Name = "button7";
             this.button7.Size = new System.Drawing.Size(112, 25);
             this.button7.TabIndex = 15;
@@ -377,11 +378,22 @@
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
+            // btnSetDefaultBrightness
+            // 
+            this.btnSetDefaultBrightness.Location = new System.Drawing.Point(368, 316);
+            this.btnSetDefaultBrightness.Name = "btnSetDefaultBrightness";
+            this.btnSetDefaultBrightness.Size = new System.Drawing.Size(112, 38);
+            this.btnSetDefaultBrightness.TabIndex = 56;
+            this.btnSetDefaultBrightness.Text = "Set Default Brightness";
+            this.btnSetDefaultBrightness.UseVisualStyleBackColor = true;
+            this.btnSetDefaultBrightness.Click += new System.EventHandler(this.btnSetDefaultBrightness_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(621, 573);
+            this.Controls.Add(this.btnSetDefaultBrightness);
             this.Controls.Add(this.button9);
             this.Controls.Add(this.label10);
             this.Controls.Add(this.label8);
@@ -455,6 +467,7 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button btnSetDefaultBrightness;
     }
 }
 

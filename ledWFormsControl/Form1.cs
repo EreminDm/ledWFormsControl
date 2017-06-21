@@ -612,7 +612,18 @@ namespace ledWFormsControl
             }
         }
 
-       
+        private void btnSetDefaultBrightness_Click(object sender, EventArgs e)
+        {
+            Connect();
+            Connect2();
+
+            NativeMethods.SetSenderBrightness((byte)0, (byte)Byte.Parse(maskedTextBox13.Text));
+            NativeMethods.SaveSetsToSender((byte)0);
+            NativeMethods.SetSenderBrightness((byte)1, (byte)Byte.Parse(maskedTextBox13.Text));
+            NativeMethods.SaveSetsToSender((byte)1);
+        }
+
+
         // END get module info
     }
 }
